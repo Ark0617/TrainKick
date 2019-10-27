@@ -15,14 +15,15 @@ from train_kick import TrainKick
 from train_kick.env.Logger import Logger
 
 # IP = "localhost"
-IP = "192.168.0.16"
+# IP = "192.168.0.16"
+IP = "127.0.0.1"
 port = 3100
 mport = 3200
 team1 = "sydney1"
 team2 = "sydney2"
 
 server_num = 1
-num_actors = 6
+num_actors = 1
 env_id = "TrainKick-v0"
 # loadFile = "SaveModel/model5.pkl"
 loadFile = "SaveModel/kicksave3.pkl"
@@ -57,7 +58,7 @@ def startServers():
 monList = []
 
 
-def get_env(rank, teamname, playerNumber, portj, mportj, sleepTime, max_episode_steps, trainType="walk", seed=0):
+def get_env(rank, teamname, playerNumber, portj, mportj, sleepTime, max_episode_steps, trainType="kick", seed=0):
     """
     Because the server can accept agent connecting at same time,
     SleepTime makes the init become in order.
@@ -159,7 +160,7 @@ def callback(_locals, _globals):
 env = SubprocVecEnv(envlist)
 env = VecNormalize(env, norm_obs=True, norm_reward=True, clip_obs=10.0, clip_reward=0.51)
 # env = VecCheckNan(env, raise_exception=True)
-model = PPO2.load(loadFile, env, learning_rate=1e-6)
+model = PPO2(MlpPolicy, env, verbose=1)  #PPO2.load(loadFile, env, learning_rate=1e-6)
 # print(model.get_parameters())
 # print(monList)
 # Logs will be saved in log_dir/monitor.csv

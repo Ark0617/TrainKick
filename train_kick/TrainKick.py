@@ -6,7 +6,7 @@ import time
 from train_kick.env.Robot import NeoRobot
 from train_kick.env.Logger import Logger
 from train_kick.env.GrandEnvs import GrandEnvs
-from train_goalie.env.GrandEnvs import NotFoundPlayerException
+from train_kick.env.GrandEnvs import NotFoundPlayerException
 from train_kick.env.TCPClient import AgentConnection
 
 
@@ -35,9 +35,9 @@ class TrainKick(gym.Env):
         self.trainType = trainType
         self.rewards_list = []
         self.robot = NeoRobot(self.team, self.playerNumber, self.env_id, self.locationX, self.locationY)
-        self.init_ball_location = self.robot.set_ball_nearyby()
         time.sleep(sleep_time)
         self.robot.joinGame(self.serverIp, self.serverPort, self.monitorPort)
+        self.init_ball_location = self.set_ball_nearby()
         action_dim = 20
         high = np.ones([action_dim])
         self.action_space = spaces.Box(-high, high, dtype=np.float64)
@@ -73,6 +73,12 @@ class TrainKick(gym.Env):
             self.logger.error("There is a Nan in states. " + str(states))
         return states, reward, self.done, {}
 
+    def set_ball_nearby(self):
+        print("set ball near the robot")
+        ball_loc = [self.locationX + 0.1, self.locationY + 0.1, 0]
+        self.robot.con.sendMessage("(ball (pos " + str(ball_loc[0])+" "+str(ball_loc[1])+" "+str(ball_loc[2])+")(vel 0 0 0))")
+        return ball_loc
+
     def episode_over(self):
         self.done = True
 
@@ -103,6 +109,7 @@ class TrainKick(gym.Env):
         time.sleep(10)
         self.robot = NeoRobot(self.team, self.playerNumber, self.env_id)
         self.robot.joinGame(self.serverIp, self.serverPort, self.monitorPort)
+        self.init_ball_location = self.set_ball_nearby()
 
     def __reward(self):
         if self.trainType not in self.trainTypes:
@@ -129,8 +136,8 @@ class TrainKick(gym.Env):
         return reward
 
     def __rewardKick(self):
-        if self.robot.grandEnvs.getBallLocation() - self.init_ball_location > 0.1:
-            reward = self.robot.grandEnvs.getBallLocation() - self.init_ball_location
+        if np.sum(self.robot.grandEnvs.getBallLocation()) - np.sum(self.init_ball_location) > 0.1:
+            reward = np.sum(self.robot.grandEnvs.getBallLocation()) - np.sum(self.init_ball_location)
         else:
             reward = -1
         return reward
@@ -169,7 +176,7 @@ class TrainKick(gym.Env):
         self.lastWalkTime = 0
         self.lastWalkPlace = None
         self.twolegs = 1
-        self.init_ball_location = self.robot.set_ball_nearby()
+        self.init_ball_location = self.set_ball_nearby()
         if self.RESETSTEP < 2:
             self.__doReset()
             self.__sendResetCommand()
@@ -195,7 +202,7 @@ class TrainKick(gym.Env):
 
     def __sendResetCommand(self):
         self.robot.con.sendMessage("(beam " + str(self.locationX) + " " + str(self.locationY) + " 0.0)")
-        self.init_ball_location = self.robot.set_ball_nearby()
+        self.init_ball_location = self.set_ball_nearby()
 
     def __checkResetAction(self, states):
         def __checkResetAction(self, states):

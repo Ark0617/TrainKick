@@ -194,6 +194,8 @@ class NeoRobot:
         time.sleep(1)
         self.con.sendMessage("(beam " + str(self.locationX) + " " + str(self.locationY) + " 0.0)")
         time.sleep(1)
+        self.con.sendMessage("(playMode PlayOn)")
+        time.sleep(1)
 
     def close(self):
         self.con.close()
@@ -205,10 +207,10 @@ class NeoRobot:
         else:
             return False
 
-    def set_ball_nearby(self):
-        ball_loc = [self.locationX + 0.1, self.locationY + 0.1, 0]
-        self.con.sendMessage("(ball (pos " + str(ball_loc[0])+" "+str(ball_loc[1])+" "+str(ball_loc[2])+")(vel 0 0 0))")
-        return ball_loc
+    # def set_ball_nearby(self):
+    #     ball_loc = [self.locationX + 0.1, self.locationY + 0.1, 0]
+    #     self.con.sendMessage("(ball (pos " + str(ball_loc[0])+" "+str(ball_loc[1])+" "+str(ball_loc[2])+")(vel 0 0 0))")
+    #     return ball_loc
 
     def update(self, message):
 

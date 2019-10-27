@@ -1,0 +1,14 @@
+#test.py#
+.#test.py
+kick.log
+train_kick.egg-info/dependency_links.txt
+train_kick.egg-info/PKG-INFO
+train_kick.egg-info/requires.txt
+train_kick.egg-info/SOURCES.txt
+train_kick.egg-info/top_level.txt
+train_kick/__pycache__/__init__.cpython-37.pyc
+train_kick/__pycache__/TrainGoalie.cpython-37.pyc
+train_kick/env/__pycache__/__init__.cpython-37.pyc
+train_kick/env/__pycache__/HttpClient.cpython-37.pyc
+train_kick/env/__pycache__/Logger.cpython-37.pyc
+train_kick/env/__pycache__/Robot.cpython-37.pyc
